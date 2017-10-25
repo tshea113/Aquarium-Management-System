@@ -40,6 +40,9 @@ void setup()
 
   //Set the button input
   pinMode(BUTTON, INPUT);
+
+  //End of setup
+  lcd.print("Ready to feed!");
 }
 
 void loop()

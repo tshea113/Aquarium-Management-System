@@ -41,7 +41,8 @@ void setup()
   //Set the button input
   pinMode(BUTTON, INPUT);
 
-  //End of setup
+  Serial.begin(9600);
+
   lcd.print("Ready to feed!");
 }
 
@@ -50,6 +51,16 @@ void loop()
   if (digitalRead(BUTTON) == HIGH)
   {
     feed();
+  }
+
+  else if (Serial.available() > 0)
+  {
+    char data = Serial.read();
+    if (data == 'f')
+    {
+      feed();
+    }
+    Serial.flush();
   }
 }
 

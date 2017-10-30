@@ -9,25 +9,28 @@ time.sleep(2)
 feedFish = ""
 
 while (feedFish != "exit"):
-	feedFish = input("Press f to feed fish!\n")
+	feedFish = raw_input("Press f to feed fish!\n")
 	feedFish = feedFish.lower();
 
 	if (feedFish == "f"):
-		print("Writing to arduino!")
+		print "Writing to arduino!"
 		arduino.write(b'f')
 		
 		
 		
 	elif (feedFish != "exit"):
-		print("Error: Invalid Input!\n")
+		print "Error: Invalid Input!\n"
 	
-	if (arduino.inwaiting() > 0):
+	if (arduino.inWaiting() > 0):
+		print "Attempting to read the data!"
 		arduinoCmd = arduino.read();
 		
 		if (arduinoCmd == 'd'):
 			temp = time.localtime(time.time())
 			
 			feedTime = ""
-			feedTime = feedTime + temp[1] + "/" + temp[2] + "/" temp[0] + " " + temp[3] + ":" + temp[4] + "\n"
+			feedTime = feedTime + str(temp[1]) + "/" + str(temp[2]) + "/" + str(temp[0]) + " " + str(temp[3]) + ":" + str(temp[4]) + "\n"
+			
+			print feedTime
 			
 			arduino.write(feedTime)

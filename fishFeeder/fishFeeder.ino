@@ -56,7 +56,10 @@ void loop()
   {
     feed();
 
+    lcd.print("Last fed at:");
     lastFeedTime = getTime();
+    lcd.setCursor(2,0);
+    lcd.print(lastFeedTime);
   }
 
   //Also feed if pi triggers
@@ -69,7 +72,10 @@ void loop()
     }
     Serial.flush();
 
+    lcd.print("Last fed at:");
     lastFeedTime = getTime();
+    lcd.setCursor(0,2);
+    lcd.print(lastFeedTime);
   }
 }
 
@@ -91,7 +97,6 @@ void feed()
 
   //Reset the stepper home for next feeding cycle
   lcd.clear();
-  lcd.print("Done Feeding!");
   stepper1.setCurrentPosition(0);
 }
 
@@ -105,13 +110,15 @@ void printFeedTime()
 
 String getTime()
 {
+  String feedTime = "";
+  
   Serial.write('d');
 
   delay(10);
   
   while (Serial.available() > 0)
   {
-    String feedTime = Serial.readStringUntil("\n");
+    feedTime = Serial.readStringUntil("\n");
   }
 
   Serial.flush();

@@ -29,6 +29,8 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 int BUTTON = 10;
 
+String lastFeedTime = "";
+
 void setup()
 {
   //Set the motor params
@@ -41,6 +43,7 @@ void setup()
   //Set the button input
   pinMode(BUTTON, INPUT);
 
+  //Set up the serial connection
   Serial.begin(9600);
 
   lcd.print("Ready to feed!");
@@ -48,11 +51,15 @@ void setup()
 
 void loop()
 {
+  //Feeds if the button is pressed
   if (digitalRead(BUTTON) == HIGH)
   {
     feed();
+
+    lastFeedTime = getTime();
   }
 
+  //Also feed if pi triggers
   else if (Serial.available() > 0)
   {
     char data = Serial.read();
@@ -61,6 +68,8 @@ void loop()
       feed();
     }
     Serial.flush();
+
+    lastFeedTime = getTime();
   }
 }
 
@@ -92,5 +101,20 @@ void feed()
 void printFeedTime()
 {
   //TODO: Figure out how to get a date/time value sent to the arduino (Possibly through the pi?)  
+}
+
+String getTime()
+{
+  Serial.write('d');
+
+  delay(10);
+  
+  while (Serial.available() > 0)
+  {
+    String feedTime = Serial.readStringUntil("\n");
+  }
+
+  Serial.flush();
+  return feedTime;
 }
 

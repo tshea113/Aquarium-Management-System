@@ -58,7 +58,7 @@ void loop()
 
     lcd.print("Last fed at:");
     lastFeedTime = getTime();
-    lcd.setCursor(2,0);
+    lcd.setCursor(0,1);
     lcd.print(lastFeedTime);
   }
 
@@ -74,7 +74,7 @@ void loop()
 
     lcd.print("Last fed at:");
     lastFeedTime = getTime();
-    lcd.setCursor(0,2);
+    lcd.setCursor(0,1);
     lcd.print(lastFeedTime);
   }
 }
@@ -110,7 +110,7 @@ void printFeedTime()
 
 String getTime()
 {
-  String feedTime = "";
+  String feedTime;
   
   Serial.write('d');
 
@@ -118,7 +118,7 @@ String getTime()
   
   while (Serial.available() > 0)
   {
-    feedTime = Serial.readStringUntil("\n");
+    feedTime = Serial.readString();
   }
 
   Serial.flush();

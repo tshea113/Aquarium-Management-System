@@ -48,13 +48,39 @@ def main():
 	#Take in the desired feed timer settings
 	feedTimer = setFeedTime()
 	
-	try:
-		while (1):
+	userInput = 0
+	
+	#Runs the menu for the program until the user decides to exit
+	while (userInput != 4):
+		print "#######################\nMain Menu:\n#######################\n1)Change Feed Timer\n2)Last Feed Time\n3)Start Feed Timer\n4)Exit\n#######################"
+		userInput = input();
+	
+		#Changes the feeder's feeding time and time between feedings
+		if (userInput == 1):
+			feedTimer = setFeedTime()
+	
+		#Prints the last feed time if it exists
+		if (userInput == 2):
 			
-			#Checks for a time request from the arduino
-			if (arduino.inWaiting() > 0):
-				talkToArduino(arduino)
-	except KeyboardInterrupt:
-		pass		
-
+			#TODO: Retrieve the last feed time and print it if available
+		
+		#This puts the feeder in standby until scheduled feed time
+		#TODO: Have the feeder run on the schedule defined in feedTimer list
+		if (userInput == 3):
+			try:
+				while (1):
+					
+					#Checks for a time request from the arduino
+					if (arduino.inWaiting() > 0):
+						talkToArduino(arduino)
+			except KeyboardInterrupt:
+				pass
+				
+		#Exit the program
+		if (userInput == 4):
+			break
+			
+		#Handles garbage input	
+		if (userInput < 1 or userInput > 4):
+			print "Error: Invalid Input!"
 if __name__ == '__main__': main()

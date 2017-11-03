@@ -30,15 +30,22 @@ def talkToArduino(arduino):
 			
 	#Arduino sends 'd' when it is requesting the time
 	if (arduinoCmd == 'd'):
-		temp = time.localtime(time.time())
+		lastFeed = time.time()
 		
 		#Formats the time for proper display on arduino LCD
 		#MM/DD/YYYY HH:MM
-		feedTime = ""
-		feedTime = feedTime + str(temp[1]) + "/" + str(temp[2]) + "/" + str(temp[0]) + " " + str(temp[3]) + ":" + str(temp[4])
+		lastFeedString = ""
+		lastFeedString = time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed))
 		
-		arduino.write(feedTime)
+		arduino.write(lastFeedString)
+		
+		return lastFeed
 
+def findNextFeed(feedHour):
+	
+	#TODO: Might use this to find the next feed time
+	pass
+	
 #Waits for an event to happen and exceutes corresponding effect
 def main():
 	#Setup the serial port for the arduino
@@ -49,11 +56,14 @@ def main():
 	feedTimer = setFeedTime()
 	
 	userInput = 0
+	lastFeed = 0
+	
+	print "#######################\nMain Menu:\n#######################\n1)Change Feed Timer\n2)Last Feed Time\n3)Start Feed Timer\n4)Exit\n#######################"
 	
 	#Runs the menu for the program until the user decides to exit
 	while (userInput != 4):
-		print "#######################\nMain Menu:\n#######################\n1)Change Feed Timer\n2)Last Feed Time\n3)Start Feed Timer\n4)Exit\n#######################"
-		userInput = input();
+		
+		userInput = input("Option: ");
 	
 		#Changes the feeder's feeding time and time between feedings
 		if (userInput == 1):
@@ -61,21 +71,29 @@ def main():
 	
 		#Prints the last feed time if it exists
 		if (userInput == 2):
+			if (lastFeed != 0):
+				print ("Last fed at: " + time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed))) 
 			
-			#TODO: Retrieve the last feed time and print it if available
-		
+			else:
+				print ("Fish not fed yet!")
+			
 		#This puts the feeder in standby until scheduled feed time
-		#TODO: Have the feeder run on the schedule defined in feedTimer list
 		if (userInput == 3):
+			print "Feeder is active!"
+			
 			try:
 				while (1):
-					
 					#Checks for a time request from the arduino
 					if (arduino.inWaiting() > 0):
-						talkToArduino(arduino)
+						lastFeed = talkToArduino(arduino)
+						
+					#TODO: Use scheduler to feed at desired interval/time
+					
 			except KeyboardInterrupt:
 				pass
 				
+			print "Feeder is no longer active!"
+			
 		#Exit the program
 		if (userInput == 4):
 			break

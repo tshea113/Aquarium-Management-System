@@ -40,7 +40,7 @@ String lastFeedTime = "";
 void setup()
 {
   //Set the motor params
-  stepper1.setMaxSpeed(500.0);
+  stepper1.setMaxSpeed(700.0);
   stepper1.setAcceleration(200.0);
 
   //Set the dimensions of the LCD
@@ -100,7 +100,7 @@ void loop()
 void feed()
 {
   lcd.clear();
-  stepper1.moveTo(4096);  //Set the desired stopping point for the feeding cycle. TODO: Determine the length of the feeding cycle.
+  stepper1.moveTo(-4096);  //Set the desired stopping point for the feeding cycle. TODO: Determine the length of the feeding cycle.
 
   //Runs the feeding cycle
   lcd.print("Feeding...");

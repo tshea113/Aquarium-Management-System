@@ -2,6 +2,7 @@ import serial
 import time
 import datetime
 import sched
+import os
 
 def setFeedTime():
 	feedHour = -1
@@ -20,8 +21,13 @@ def setFeedTime():
 		if (feedInterval < 0):
 			print "Error: Invalid interval!"
 	
-	feedParams = [feedHour, feedInterval]
+	#Save the feed parameters to a text file
+	newTimes = str(feedHour) + " " + str(feedInterval)
+	with open("feed_time.txt", "w") as file:
+		file.write(newTimes)
 	
+
+	feedParams = [feedHour, feedInterval]
 	return feedParams
 
 def talkToArduino(arduino):
@@ -45,6 +51,16 @@ def findNextFeed(feedHour):
 	
 	#TODO: Might use this to find the next feed time
 	pass
+
+#Retrieves the feed timer parameters from the text file
+def getFeedTimer():
+	with open("feed_time.txt", "r") as file:
+		temp = file.read()
+	
+	temp.split()
+	
+	feedParams = [temp[0], temp[1]]
+	return feedParams
 	
 #Waits for an event to happen and exceutes corresponding effect
 def main():
@@ -52,8 +68,13 @@ def main():
 	arduino = serial.Serial('COM3',9600, timeout=.1)
 	time.sleep(2)
 	
-	#Take in the desired feed timer settings
-	feedTimer = setFeedTime()
+	#Create feeding schedule if it doesn't exist
+	if not os.path.exists("feed_time.txt"):
+		feedTimer = setFeedTime()
+	
+	else:
+		feedTimer = getFeedTimer()
+			
 	
 	userInput = 0
 	lastFeed = 0

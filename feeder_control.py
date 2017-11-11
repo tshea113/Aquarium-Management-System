@@ -4,6 +4,8 @@ import datetime
 import sched
 import os
 
+lastFeed = 0.0
+
 #Takes in the feed time and intervals from the users and stores in text file
 #Returns a tuple with the hour to feed and time between feedings
 def setFeedTime():
@@ -35,22 +37,28 @@ def setFeedTime():
 	feedParams = [feedHour, feedInterval]
 	return feedParams
 
+#Sends the feed time to the arduino
+def sendTime(arduino):
+	global lastFeed 
+	lastFeed = time.time()
+		
+	#Formats the time for proper display on arduino LCD
+	#MM/DD/YYYY HH:MM
+	lastFeedString = ""
+	lastFeedString = time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed))
+	arduino.write(lastFeedString)
+	
+	#Logs the time of the feeding
+	with open("feed_log.txt", "a") as file:
+		file.write(time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed)) + "\n")
+	
 def talkToArduino(arduino):
 	#Reads data from the arduino
 	arduinoCmd = arduino.read();
 			
 	#Arduino sends 'd' when it is requesting the time
 	if (arduinoCmd == 'd'):
-		lastFeed = time.time()
-		
-		#Formats the time for proper display on arduino LCD
-		#MM/DD/YYYY HH:MM
-		lastFeedString = ""
-		lastFeedString = time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed))
-		
-		arduino.write(lastFeedString)
-		
-		return lastFeed
+		sendTime(arduino)
 
 def findNextFeed(feedHour):
 	
@@ -62,16 +70,22 @@ def getFeedTimer():
 	with open("feed_time.txt", "r") as file:
 		temp = file.read()
 	
-	temp.split()
+	temp = temp.split()
 	
-	feedParams = [temp[0], temp[1]]
+	feedParams = [int(temp[0]), int(temp[1])]
 	return feedParams
+
+def feedFish(arduino):
+	arduino.write('f')
+	return talkToArduino(arduino)
 	
 #Waits for an event to happen and exceutes corresponding effect
 def main():
 	#Setup the serial port for the arduino
 	arduino = serial.Serial('COM3',9600, timeout=.1)
 	time.sleep(2)
+	
+	s = sched.scheduler(time.time, time.sleep)
 	
 	#Create feeding schedule if it doesn't exist
 	if not os.path.exists("feed_time.txt"):
@@ -86,7 +100,6 @@ def main():
 		file.close()	
 	
 	userInput = 0
-	lastFeed = 0
 	
 	print "#######################\nMain Menu:\n#######################\n1)Change Feed Timer\n2)Last Feed Time\n3)Start Feed Timer\n4)Exit\n#######################"
 	
@@ -111,18 +124,36 @@ def main():
 		if (userInput == 3):
 			print "Feeder is active!"
 			
+			currHour = datetime.datetime.now().hour
+			
+			#Sets the feed timer for later in the day if it is after the current time
+			if (int(feedTimer[0]) > currHour):
+				feedDelta = int(feedTimer[0]) - currHour
+			
+			#Otherwise set it for the next day
+			else:
+				feedDelta = ((24 - currHour) + feedTimer[0])
+			
+			timeToFeed = time.time() + (feedDelta * 3600)
+			print "Next feed time:", time.asctime(time.localtime(timeToFeed))
+			s.enterabs(timeToFeed, 1, feedFish, (arduino,))
+			s.run()
+			
 			try:
 				while (1):
 					#Checks for a time request from the arduino
+					#TODO: Fix issue with date not being sent while scheduler is waiting.
 					if (arduino.inWaiting() > 0):
-						lastFeed = talkToArduino(arduino)
+						print "Sending date!"
+						talkToArduino(arduino)
+												
+					#If the feeding has occurred, set for next interval
+					if not s.queue:
+						feedDelay = feedTimer[1] * 3600
+						s.enter(feedDelay, 1, feedFish, (arduino,))
+						print "Next feed time in", feedTimer[1], "hours." 
+						s.run()
 						
-						#Logs the time of the feeding
-						with open("feed_log.txt", "a") as file:
-							file.write(time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed)) + "\n")
-						
-					#TODO: Use scheduler to feed at desired interval/time
-					
 			except KeyboardInterrupt:
 				pass
 				

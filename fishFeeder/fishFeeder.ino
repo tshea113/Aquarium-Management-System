@@ -61,12 +61,7 @@ void loop()
   //Feeds if the button is pressed
   if (digitalRead(FEED_BUTTON) == HIGH)
   {
-    feed();
-
-    lcd.print("Last fed at:");
-    lastFeedTime = getTime();
-    lcd.setCursor(0, 1);
-    lcd.print(lastFeedTime);
+    lastFeedTime = feed();
   }
 
   //Switches the display on and off
@@ -82,14 +77,11 @@ void loop()
     char data = Serial.read();
     if (data == 'f')
     {
-      feed();
-    }
-    Serial.flush();
+      lastFeedTime = feed();
 
-    lcd.print("Last fed at:");
-    lastFeedTime = getTime();
-    lcd.setCursor(0, 1);
-    lcd.print(lastFeedTime);
+      Serial.flush();
+    }
+    
   }
 }
 
@@ -97,8 +89,11 @@ void loop()
    This operates the fish feeder
    Turns the stepper motor for 1 feeding cycle
 */
-void feed()
+String feed()
 {
+  //Retrieve the feed time from the pi
+  String lastFeedTime = getTime();
+  
   lcd.clear();
   stepper1.moveTo(-4096);  //Set the desired stopping point for the feeding cycle. TODO: Determine the length of the feeding cycle.
 
@@ -112,6 +107,13 @@ void feed()
   //Reset the stepper home for next feeding cycle
   lcd.clear();
   stepper1.setCurrentPosition(0);
+
+  //Print the time of feeding to the lcd
+  lcd.print("Last fed at:");
+  lcd.setCursor(0, 1);
+  lcd.print(lastFeedTime);
+
+  return lastFeedTime;
 }
 
 /**
@@ -157,7 +159,7 @@ String getTime()
 
   Serial.write('d');
 
-  delay(10);
+  delay(20);
 
   while (Serial.available() > 0)
   {

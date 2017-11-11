@@ -4,9 +4,13 @@ import datetime
 import sched
 import os
 
+#Takes in the feed time and intervals from the users and stores in text file
+#Returns a tuple with the hour to feed and time between feedings
 def setFeedTime():
 	feedHour = -1
 	feedInterval = -1
+	
+	#Hour needs to be in 24 hour format (0 to 23)
 	while (feedHour < 0 or feedHour > 23):
 		print "Enter the hour in 24 hour format at which you wish to first feed the fish:"
 		feedHour = input()
@@ -14,6 +18,7 @@ def setFeedTime():
 		if (feedHour < 0 or feedHour > 23):
 			print "Error: Invalid hour!"
 	
+	#Cannot have negative interval
 	while (feedInterval < 0):
 		print "Enter the desired time interval in hours between feedings:"
 		feedInterval = input()
@@ -74,7 +79,11 @@ def main():
 	
 	else:
 		feedTimer = getFeedTimer()
-			
+	
+	#Create a feed log if it doesn't exist
+	if not os.path.exists("feed_log.txt"):
+		file = open("feed_log.txt", "w")
+		file.close()	
 	
 	userInput = 0
 	lastFeed = 0
@@ -107,6 +116,10 @@ def main():
 					#Checks for a time request from the arduino
 					if (arduino.inWaiting() > 0):
 						lastFeed = talkToArduino(arduino)
+						
+						#Logs the time of the feeding
+						with open("feed_log.txt", "a") as file:
+							file.write(time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed)) + "\n")
 						
 					#TODO: Use scheduler to feed at desired interval/time
 					

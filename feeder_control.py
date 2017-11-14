@@ -3,6 +3,7 @@ import time
 import datetime
 import sched
 import os
+import threading
 
 lastFeed = 0.0
 
@@ -60,11 +61,6 @@ def talkToArduino(arduino):
 	if (arduinoCmd == 'd'):
 		sendTime(arduino)
 
-def findNextFeed(feedHour):
-	
-	#TODO: Might use this to find the next feed time
-	pass
-
 #Retrieves the feed timer parameters from the text file
 def getFeedTimer():
 	with open("feed_time.txt", "r") as file:
@@ -78,6 +74,12 @@ def getFeedTimer():
 def feedFish(arduino):
 	arduino.write('f')
 	return talkToArduino(arduino)
+
+#Used to check for time requests from arduino in background
+def feedCheck(arduino):
+	while (1):
+		if (arduino.inWaiting() > 0):
+			talkToArduino(arduino)
 	
 #Waits for an event to happen and exceutes corresponding effect
 def main():
@@ -86,6 +88,11 @@ def main():
 	time.sleep(2)
 	
 	s = sched.scheduler(time.time, time.sleep)
+	
+	#Thread that checks for time requests from arduino
+	t = threading.Thread(name='feedCheck', target=feedCheck, args=(arduino,))
+	t.daemon = True
+	t.start()
 	
 	#Create feeding schedule if it doesn't exist
 	if not os.path.exists("feed_time.txt"):
@@ -106,7 +113,7 @@ def main():
 	#Runs the menu for the program until the user decides to exit
 	while (userInput != 4):
 		
-		userInput = input("Option: ");
+		userInput = input("Option: ")
 	
 		#Changes the feeder's feeding time and time between feedings
 		if (userInput == 1):
@@ -140,13 +147,7 @@ def main():
 			s.run()
 			
 			try:
-				while (1):
-					#Checks for a time request from the arduino
-					#TODO: Fix issue with date not being sent while scheduler is waiting.
-					if (arduino.inWaiting() > 0):
-						print "Sending date!"
-						talkToArduino(arduino)
-												
+				while (1):					
 					#If the feeding has occurred, set for next interval
 					if not s.queue:
 						feedDelay = feedTimer[1] * 3600

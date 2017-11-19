@@ -54,8 +54,11 @@ def sendTime(arduino):
 		file.write(time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed)) + "\n")
 	
 def talkToArduino(arduino):
+	arduinoCmd = 0
+	
 	#Reads data from the arduino
-	arduinoCmd = arduino.read();
+	if (arduino.inWaiting() > 0):
+		arduinoCmd = arduino.read()
 			
 	#Arduino sends 'd' when it is requesting the time
 	if (arduinoCmd == 'd'):
@@ -84,7 +87,10 @@ def feedCheck(arduino):
 #Waits for an event to happen and exceutes corresponding effect
 def main():
 	#Setup the serial port for the arduino
-	arduino = serial.Serial('COM3',9600, timeout=.1)
+	windowsPort = 'COM3'	#Used for windows debugging
+	piPort = '/dev/ttyACM0'	#Used on the pi
+	
+	arduino = serial.Serial(windowsPort,9600, timeout=.1)
 	time.sleep(2)
 	
 	s = sched.scheduler(time.time, time.sleep)
@@ -132,16 +138,19 @@ def main():
 			print "Feeder is active!"
 			
 			currHour = datetime.datetime.now().hour
+			currMinute = datetime.datetime.now().minute
 			
 			#Sets the feed timer for later in the day if it is after the current time
 			if (int(feedTimer[0]) > currHour):
-				feedDelta = int(feedTimer[0]) - currHour
+				feedDelta = (60 * (int(feedTimer[0]) - currHour)) - currMinute
 			
 			#Otherwise set it for the next day
 			else:
-				feedDelta = ((24 - currHour) + feedTimer[0])
+				feedDelta = (60 * ((24 - currHour) + feedTimer[0])) - currMinute
 			
-			timeToFeed = time.time() + (feedDelta * 3600)
+			#feedDelta holds the number of minutes from the current time to feed
+			#timeToFeed is the absolute time in seconds to feed
+			timeToFeed = (time.time() + (feedDelta * 60))
 			print "Next feed time:", time.asctime(time.localtime(timeToFeed))
 			s.enterabs(timeToFeed, 1, feedFish, (arduino,))
 			s.run()
@@ -150,7 +159,7 @@ def main():
 				while (1):					
 					#If the feeding has occurred, set for next interval
 					if not s.queue:
-						feedDelay = feedTimer[1] * 3600
+						feedDelay = int(feedTimer[1]) * 3600
 						s.enter(feedDelay, 1, feedFish, (arduino,))
 						print "Next feed time in", feedTimer[1], "hours." 
 						s.run()

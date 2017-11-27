@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+	<title>Piduino Fish Feeder</title>
+	<link rel="stylesheet" type="text/css" href="../static/style.css">
+    {% endblock %}
+</head>
+<body>
+    {% block topBar %}
+    <div id="simpleModal" class="modal">
+        <div class="modal_content">
+            <span class="closeBtn">&times;</span>
+            <p>Hello, this is an error!</p>
+        </div>
+    </div>
+
+	<header id="mainHeader">
+		<div class="container">
+			<h1>Piduino Automated Fish Feeder</h1>
+		</div>
+	</header>
+
+	<nav id="navbar">
+		<div class="container">
+			<ul>
+				<li><a href="{{url_for('index')}}">Home</a></li>
+				<li><a href="{{url_for('about')}}">About</a></li>
+				<li><a href="{{url_for('change_schedule')}}">Change Schedule</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<section id="banner"></section>
+    {% endblock %}
+
+    {% block content %}
+    <div class="container">
+        {% block mainContent %}{% endblock %}
+        {% block sideBar %}
+        <aside id="sidebar">
+			<h1>Status</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam beatae commodi cupiditate dolorum, eaque earum odit perspiciatis sequi vel voluptatum! Ab deleniti dolorem earum eveniet explicabo incidunt laboriosam ullam voluptates?</p>
+        </aside>
+        {% endblock %}
+    </div>
+
+    {% block foot %}
+	<footer id="mainFooter">
+		<p>Copyright &copy; 2017 1807 Productions</p>
+	</footer>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% endblock %}
+</body>
+</html>

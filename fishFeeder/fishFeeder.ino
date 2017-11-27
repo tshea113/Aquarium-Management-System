@@ -12,7 +12,9 @@
 
 
 #include <AccelStepper.h>
-#include <LiquidCrystal.h>
+#include <Wire.h>
+#include <LCD.h>
+#include <LiquidCrystal_I2C.h>
 #define HALFSTEP 8
 
 // Motor pin definitions
@@ -25,11 +27,11 @@
 AccelStepper stepper1(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
 
 //Initialize the LCD
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal_I2C lcd(0x3F,2,1,0,4,5,6,7);
 
 //Define the buttons
 int FEED_BUTTON = 10;
-int DISPLAY_BUTTON = 13;
+int DISPLAY_BUTTON = 11;
 
 //Used for turning the display off and on
 bool isDisplayOn = true;
@@ -44,7 +46,12 @@ void setup()
   stepper1.setAcceleration(200.0);
 
   //Set the dimensions of the LCD
-  lcd.begin(16, 2);
+  lcd.setBacklightPin(3,POSITIVE);
+  lcd.setBacklight(HIGH);
+  lcd.begin(16,2);
+  lcd.clear();
+  lcd.home();
+  
 
   //Set the button input
   pinMode(FEED_BUTTON, INPUT);
@@ -125,6 +132,7 @@ bool displayFeedTime(String lastFeedTime, bool isDisplayOn)
   if (isDisplayOn)
   {
     lcd.noDisplay();
+    lcd.setBacklight(LOW);
     isDisplayOn = false;
 
     return isDisplayOn;
@@ -146,6 +154,7 @@ bool displayFeedTime(String lastFeedTime, bool isDisplayOn)
       lcd.setCursor(0,1);
       lcd.print(lastFeedTime);
     }
+    lcd.setBacklight(HIGH);
     return isDisplayOn;
   }
 }

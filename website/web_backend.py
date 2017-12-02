@@ -97,21 +97,20 @@ def live_view():
 
 
 @app.route('/settings')
-def settings:
+def settings():
 	feedInfo = getFeedInfo()
+	global p
 	if request.method == 'POST':
 
 		# Resets the feeder controller program and returns user to the home
 		if request.form['submit'] == 'reset':
-			global p
 			resetFeeder()
 			isAlive = feederActive(p.is_alive())
 		return render_template('index.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)
 
 	if request.method == 'GET':
-		global p
 		isAlive = feederActive(p.is_alive())
-		return render_template('settings.html'lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)		
+		return render_template('settings.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)		
 
 @app.errorhandler(404)
 def page_not_found(e):

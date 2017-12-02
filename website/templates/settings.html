@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block mainContent %}
+
+
+<form class="reset" method="POST" onsubmit="return resetController();">
+	<h1>Restart Program:</h1>
+		<p>In the event of a crash or error, use this button to reset the feeder scheduling program.</p>
+
+		<input type="submit" name="Reset" value="reset">
+</form>
+
+
+{% endblock %}

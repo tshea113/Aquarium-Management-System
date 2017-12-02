@@ -42,3 +42,8 @@ function check_input() {
         return true;
     }
 }
+
+function resetController() {
+    alert('You successfully reset the feeder!');
+    return true;
+}

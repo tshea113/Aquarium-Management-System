@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Piduino Fish Feeder</title>
+    <link rel="icon" href="{{ url_for('static', filename='css/images/fishy.ico') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+	<header id="mainHeader">
+		<div class="container">
+			<h1>Piduino Automated Fish Feeder</h1>
+		</div>
+	</header>
+
+	<nav id="navbar">
+		<div class="container">
+			<ul>
+				<li><a href="{{url_for('index')}}">Home</a></li>
+				<li><a href="{{url_for('about')}}">About</a></li>
+				<li><a href="{{url_for('change_schedule')}}">Change Schedule</a></li>
+                <li><a href="{{url_for('live_view')}}">Live View</a></li>
+                <li><a href="{{url_for('settings')}}">Settings</a></li>
+
+			</ul>
+		</div>
+	</nav>
+
+	<section id="banner"></section>
+
+     <div class="container">
+        <section id="contentArea">
+            {% block mainContent %}{% endblock %}
+        </section>
+        {% block sidebar %}
+        <aside id="sidebar">
+			<h1>Status</h1>
+            <div id="sidebarContent">
+                <div id="sidebarSubcontent">
+                    <h2>Next Feed Time:</h2>
+                    <p>{{ nextFeedTime }}</p>
+                </div>
+                <div id="sidebarSubcontent">
+                    <h2>Last Feed Time:</h2>
+                    <p>{{ lastFeedTime }}</p>
+                </div>
+                <div id="sidebarSubcontent">
+                    <h2>Feeder Status:</h2>
+                    <p>{{ status }}</p>
+                </div>
+            </div>
+        </aside>
+        {% endblock %}
+    </div>
+
+	<footer id="mainFooter">
+		<p>Copyright &copy; 2017 1807 Productions</p>
+	</footer>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

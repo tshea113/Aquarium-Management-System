@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Piduino Fish Feeder</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+	<header id="mainHeader">
+		<div class="container">
+			<h1>Piduino Automated Fish Feeder</h1>
+		</div>
+	</header>
+
+	<nav id="navbar">
+		<div class="container">
+			<ul>
+				<li><a href="{{url_for('index')}}">Home</a></li>
+				<li><a href="{{url_for('about')}}">About</a></li>
+				<li><a href="{{url_for('change_schedule')}}">Change Schedule</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<section id="banner"></section>
+
+    <div class="container">
+        <p>Whoops, could not find that page. (404)</p>
+    </div>
+
+	<footer id="mainFooter">
+		<p>Copyright &copy; 2017 1807 Productions</p>
+	</footer>
+
+</body>
+</html>

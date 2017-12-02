@@ -1,9 +1,15 @@
 from flask import Flask, render_template, request, flash, url_for
 import feeder_control
 from multiprocessing import Process
+from flask_basicauth import BasicAuth
 
 
 app = Flask(__name__)
+
+app.config['BASIC_AUTH_USERNAME'] = 'tyler'
+app.config['BASIC_AUTH_PASSWORD'] = 'aquar1umf33d3r!'
+
+basic_auth = BasicAuth(app)
 
 p=0
 
@@ -55,6 +61,7 @@ def index():
 
 # Handles sending the schedule params to the text file for the feeder
 @app.route('/change_schedule', methods=['GET', 'POST'])
+@basic_auth.required
 def change_schedule():
     feedInfo = getFeedInfo()
     global p
@@ -96,19 +103,20 @@ def live_view():
     return render_template('live_view.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)
 
 
-@app.route('/settings')
+@app.route('/settings', methods=['GET', 'POST'])
+@basic_auth.required
 def settings():
 	feedInfo = getFeedInfo()
 	global p
 	if request.method == 'POST':
-
 		# Resets the feeder controller program and returns user to the home
-		if request.form['submit'] == 'reset':
+		choice = request.form['reset']
+		if choice == 'Reset':
 			resetFeeder()
 			isAlive = feederActive(p.is_alive())
 		return render_template('index.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)
 
-	if request.method == 'GET':
+	else:
 		isAlive = feederActive(p.is_alive())
 		return render_template('settings.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)		
 

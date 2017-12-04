@@ -43,6 +43,7 @@ function check_input() {
     }
 }
 
+//Ultimately decided against using this, but may use it in the future
 function resetController() {
     alert('You successfully reset the feeder!');
     return true;

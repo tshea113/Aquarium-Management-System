@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block mainContent %}
 
-<p>Try to imagine a webcam of the tank here</p>
-
+<div class="liveFeed">
+	<h1>Live Feed</h1>
+	
+	<img src="{{ url_for('camera_feed') }}">
+</div>
 {% endblock %}

@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, flash, url_for
+from flask import Flask, render_template, request, flash, url_for, Response
 import feeder_control
 from multiprocessing import Process
 from flask_basicauth import BasicAuth
+from camera import Camera
 
 
 app = Flask(__name__)
@@ -42,6 +43,14 @@ def resetFeeder():
 	p.daemon = True
 	p.start()
 
+
+def gen(camera):
+		while True:
+			frame = camera.get_frame()
+			yield (b'--frame\r\n'
+				   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+	
 @app.before_first_request
 def setupFeeder():
 	global p   
@@ -103,6 +112,11 @@ def live_view():
     return render_template('live_view.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)
 
 
+@app.route('/camera_feed')
+def camera_feed():
+		return Response(gen(Camera()), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+	
 @app.route('/settings', methods=['GET', 'POST'])
 @basic_auth.required
 def settings():

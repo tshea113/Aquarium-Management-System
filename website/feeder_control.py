@@ -91,7 +91,7 @@ def feedFish(arduino):
 
 
 # Used to check for time requests from arduino in background
-def feedCheck(arduino):
+def arduinoCheck(arduino):
 	while 1:
 		if arduino.inWaiting() > 0:
 			talkToArduino(arduino)
@@ -101,7 +101,7 @@ def feedCheck(arduino):
 def runFeeder():
 	# Setup the serial port for the arduino
 	windowsPort = 'COM3'	  # Used for windows debugging
-	piPort = '/dev/ttyACM0'	  # Used on the pi
+	piPort = '/dev/ttyUSB0'	  # Used on the pi
 	
 	arduino = serial.Serial(piPort, 9600, timeout=.1)
 	time.sleep(2)
@@ -109,7 +109,7 @@ def runFeeder():
 	s = sched.scheduler(time.time, time.sleep)
 	
 	# Thread that checks for time requests from arduino
-	t = threading.Thread(name='feedCheck', target=feedCheck, args=(arduino,))
+	t = threading.Thread(name='arduinoCheck', target=arduinoCheck, args=(arduino,))
 	t.daemon = True
 	t.start()
 	

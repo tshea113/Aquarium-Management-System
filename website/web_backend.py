@@ -14,6 +14,7 @@ basic_auth = BasicAuth(app)
 
 p=0
 
+# Read the next/last feed times from their respective files
 def getFeedInfo():
 	try:
 		with open("/home/pi/fish_feeder/env/fishFeeder/logs/last_feed.txt", "r") as f:
@@ -28,13 +29,15 @@ def getFeedInfo():
 		return ("Error: Something went wrong!", "Error: Something went Wrong!")
 
 
-def feederActive(isAlive):
-	if isAlive:
+# Returns a string of the process' status
+def feederActive(pAlive):
+	if pAlive:
 		return "Active"
 	else:
 		return "Inactive"
 
 
+# Resets the feeder control process
 def resetFeeder():
 	global p
 	if p.is_alive:
@@ -51,6 +54,7 @@ def gen(camera):
 				   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 	
+# Startup the feeder control
 @app.before_first_request
 def setupFeeder():
 	global p   

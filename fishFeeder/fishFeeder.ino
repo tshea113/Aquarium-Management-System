@@ -60,6 +60,7 @@ void setup()
   //Set up the serial connection
   Serial.begin(9600);
 
+  //Setup Confirmation
   lcd.print("Ready to feed!");
 }
 
@@ -79,14 +80,12 @@ void loop()
   }
 
   //Also feed if pi triggers
-  else if (Serial.available() > 0)
+  if (Serial.available() > 0)
   {
     char data = Serial.read();
     if (data == 'f')
     {
       lastFeedTime = feed();
-
-      Serial.flush();
     }
     
   }
@@ -95,6 +94,7 @@ void loop()
 /**
    This operates the fish feeder
    Turns the stepper motor for 1 feeding cycle
+   Returns the time at which it fed
 */
 String feed()
 {
@@ -102,7 +102,10 @@ String feed()
   String lastFeedTime = getTime();
   
   lcd.clear();
-  stepper1.moveTo(-4096);  //Set the desired stopping point for the feeding cycle. TODO: Determine the length of the feeding cycle.
+
+  //Set the desired stopping point for the feeding cycle. 
+  //TODO: Determine the length of the feeding cycle.
+  stepper1.moveTo(-4096);  
 
   //Runs the feeding cycle
   lcd.print("Feeding...");
@@ -146,7 +149,7 @@ bool displayFeedTime(String lastFeedTime, bool isDisplayOn)
     //If the device was just turned on there will be no last feed time
     if (lastFeedTime.equals(""))
     {
-      lcd.print("Not fed!");
+      lcd.print("Not fed yet!");
     }
     else
     {
@@ -166,16 +169,15 @@ String getTime()
 {
   String feedTime;
 
+  //char d used to request the date
   Serial.write('d');
-
   delay(20);
 
+  //Retrieve the date
   while (Serial.available() > 0)
   {
     feedTime = Serial.readString();
   }
-
-  Serial.flush();
   return feedTime;
 }
 

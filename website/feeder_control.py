@@ -47,9 +47,13 @@ def sendTime(arduino):
 	lastFeed = time.time()
 		
 	# Formats the time for proper display on arduino LCD
-	# MM/DD/YYYY HH:MM
+	# MM/DD/YYYY HH:MM\n
+	# Newline signals an end of string to arduino
 	lastFeedString = ""
-	lastFeedString = time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed))
+	lastFeedString = time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed)) + '\n'
+	
+	
+	# Send the date to arduino
 	arduino.write(lastFeedString)
 	
 	# Logs the time of the feeding
@@ -62,6 +66,7 @@ def sendTime(arduino):
 		f.write(time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed)))
 
 
+# Handles requests from the arduino
 def talkToArduino(arduino):
 	arduinoCmd = 0
 	
@@ -69,11 +74,17 @@ def talkToArduino(arduino):
 	if arduino.inWaiting() > 0:
 		arduinoCmd = arduino.read()
 			
-	# Arduino sends 'd' when it is requesting the time
-	if arduinoCmd == 'd':
-		sendTime(arduino)
+		# Arduino sends 'd' when it is requesting the time
+		# This will happen when a manual feed cycle occurs
+		if arduinoCmd == 'd':
+			sendTime(arduino)
+			
+		# Arduino sends 'r' when it has been reset
+		# Writing 'r' back completes the connection handshake
+		if arduinoCmd == 'r':
+			arduino.write('r')
 
-
+				
 # Retrieves the feed timer parameters from the text file
 def getFeedTimer():
 	with open("/home/pi/fish_feeder/env/fishFeeder/logs/feed_time.txt", "r") as f:
@@ -84,9 +95,10 @@ def getFeedTimer():
 	feedParams = [int(temp[0]), int(temp[1])]
 	return feedParams
 
-
+# Sends the feed siganl
 def feedFish(arduino):
 	arduino.write('f')
+	sleep(0.05)		
 	return talkToArduino(arduino)
 
 
@@ -104,7 +116,15 @@ def runFeeder():
 	piPort = '/dev/ttyUSB0'	  # Used on the pi
 	
 	arduino = serial.Serial(piPort, 9600, timeout=.1)
-	time.sleep(2)
+	
+	# Confirm connection to the arduino
+	arduinoConnected = False
+	while not arduinoConnected:
+		if arduino.inWaiting() > 0:
+			temp = arduino.read()
+			if temp == 'r':
+				arduinoConnected = True
+				arduino.write('r')
 	
 	s = sched.scheduler(time.time, time.sleep)
 	

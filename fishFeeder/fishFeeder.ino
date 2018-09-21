@@ -54,12 +54,28 @@ void setup()
   
 
   //Set the button input
-  pinMode(FEED_BUTTON, INPUT);
-  pinMode(DISPLAY_BUTTON, INPUT);
+  pinMode(FEED_BUTTON, INPUT_PULLUP);
+  pinMode(DISPLAY_BUTTON, INPUT_PULLUP);
 
   //Set up the serial connection
   Serial.begin(9600);
 
+  delay(2000);
+
+  //Handshake to establish serial connection
+  Serial.print('r');
+
+  while (1)
+  {
+    if (Serial.available() > 0)
+    {
+      if (Serial.read() == 'r')
+      {
+        break;
+      }
+    }
+  }
+  
   //Setup Confirmation
   lcd.print("Ready to feed!");
 }
@@ -83,9 +99,17 @@ void loop()
   if (Serial.available() > 0)
   {
     char data = Serial.read();
+    
+    //f requests a feed cycle
     if (data == 'f')
     {
       lastFeedTime = feed();
+    }
+
+    //d precedes a date string
+    if (data == 'd')
+    {
+      lastFeedTime = Serial.readString();
     }
     
   }
@@ -167,17 +191,23 @@ bool displayFeedTime(String lastFeedTime, bool isDisplayOn)
  */
 String getTime()
 {
-  String feedTime;
+  String feedTime = "";
 
   //char d used to request the date
   Serial.write('d');
-  delay(20);
-
+  delay(30);
+  
   //Retrieve the date
+  //Date is terminated by a newline
   while (Serial.available() > 0)
   {
-    feedTime = Serial.readString();
+        char temp = Serial.read();
+        if (temp != '\n')
+        {
+          feedTime += temp;  
+        }
   }
+      
   return feedTime;
 }
 

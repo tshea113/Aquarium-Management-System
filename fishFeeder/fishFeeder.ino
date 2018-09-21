@@ -30,8 +30,17 @@ AccelStepper stepper1(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
 LiquidCrystal_I2C lcd(0x3F,2,1,0,4,5,6,7);
 
 //Define the buttons
-int FEED_BUTTON = 10;
-int DISPLAY_BUTTON = 11;
+const int FEED_BUTTON = 10;
+const int DISPLAY_BUTTON = 11;
+const int ROTATIONS_BUTTON = 12;
+
+//Define the rotation settings
+const int TWO_TURN = -8192;
+const int ONE_TURN = -4096;
+const int HALF_TURN = -2048;
+const int QUARTER_TURN = -1024;
+
+int rotations = ONE_TURN;
 
 //Used for turning the display off and on
 bool isDisplayOn = true;
@@ -56,6 +65,7 @@ void setup()
   //Set the button input
   pinMode(FEED_BUTTON, INPUT_PULLUP);
   pinMode(DISPLAY_BUTTON, INPUT_PULLUP);
+  pinMode(ROTATIONS_BUTTON, INPUT_PULLUP);
 
   //Set up the serial connection
   Serial.begin(9600);
@@ -85,7 +95,7 @@ void loop()
   //Feeds if the button is pressed
   if (digitalRead(FEED_BUTTON) == LOW)
   {
-    lastFeedTime = feed();
+    lastFeedTime = feed(rotations);
   }
 
   //Switches the display on and off
@@ -95,6 +105,35 @@ void loop()
     delay(500);
   }
 
+  //Choose between different feed amounts
+  if (digitalRead(ROTATIONS_BUTTON) == LOW)
+  {
+    switch(rotations)
+    {
+      case TWO_TURN:
+        rotations = QUARTER_TURN;
+        lcd.clear();
+        lcd.print("Quarter turn");
+        break;
+      case ONE_TURN:
+        rotations = TWO_TURN;
+        lcd.clear();
+        lcd.print("Two turns");
+        break;
+      case HALF_TURN: 
+        rotations = ONE_TURN;
+        lcd.clear();
+        lcd.print("One turn");
+        break;
+      case QUARTER_TURN:
+        rotations = HALF_TURN;
+        lcd.clear();
+        lcd.print("Half turn");
+        break;  
+    }
+    delay(500);
+  }
+  
   //Also feed if pi triggers
   if (Serial.available() > 0)
   {
@@ -103,7 +142,7 @@ void loop()
     //f requests a feed cycle
     if (data == 'f')
     {
-      lastFeedTime = feed();
+      lastFeedTime = feed(rotations);
     }
 
     //d precedes a date string
@@ -120,7 +159,7 @@ void loop()
    Turns the stepper motor for 1 feeding cycle
    Returns the time at which it fed
 */
-String feed()
+String feed(int rotations)
 {
   //Retrieve the feed time from the pi
   String lastFeedTime = getTime();
@@ -129,7 +168,7 @@ String feed()
 
   //Set the desired stopping point for the feeding cycle. 
   //TODO: Determine the length of the feeding cycle.
-  stepper1.moveTo(-4096);  
+  stepper1.moveTo(rotations);  
 
   //Runs the feeding cycle
   lcd.print("Feeding...");

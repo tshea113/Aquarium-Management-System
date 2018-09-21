@@ -83,13 +83,13 @@ void setup()
 void loop()
 {
   //Feeds if the button is pressed
-  if (digitalRead(FEED_BUTTON) == HIGH)
+  if (digitalRead(FEED_BUTTON) == LOW)
   {
     lastFeedTime = feed();
   }
 
   //Switches the display on and off
-  if (digitalRead(DISPLAY_BUTTON) == HIGH)
+  if (digitalRead(DISPLAY_BUTTON) == LOW)
   {
     isDisplayOn = displayFeedTime(lastFeedTime, isDisplayOn);
     delay(500);

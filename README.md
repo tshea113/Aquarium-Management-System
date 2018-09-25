@@ -1,16 +1,15 @@
-# Piduino Automated Fish Feeder
+# Aquarium Management System
 ## Description:
-An automated fish feeder powered by Raspberry Pi and Arduino.  Feeds fish in scheduled intervals according to user defined start time and time between feedings as well as at the press of a hardware button.  Able to remotely monitor and change feed schedule from a website hosted on the Raspberry Pi.
+An aquarium management system powered by Raspberry Pi and Arduino.  Feeds fish in scheduled intervals according to user defined start time and time between feedings as well as at the press of a hardware button.  Able to remotely monitor and change feed schedule from a website hosted on the Raspberry Pi.  More features currently in development.
 
 ## Parts:
 - Arduino
 - Raspberry Pi
 - 3D printed feeder mechanism
-- 2x 10kOhm Resistors
 - 2x Pushbutton Switches
 - 28BYJ-48 Stepper Motor
 - LN003 Motor Driver
-- 16x2 LCD with LCM1602 IIC I2C Backpack
+- 16x2 LCD with LCM1602 I2C Backpack
 
 ## Setup:
 ### Arduino:

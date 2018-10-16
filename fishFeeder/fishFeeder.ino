@@ -70,13 +70,12 @@ void setup()
   //Set up the serial connection
   Serial.begin(9600);
 
-  delay(2000);
-
   //Handshake to establish serial connection
-  Serial.print('r');
-
   while (1)
   {
+	delay(1000);
+	Serial.print('r');
+	delay(1000);
     if (Serial.available() > 0)
     {
       if (Serial.read() == 'r')
@@ -246,7 +245,7 @@ String getTime()
           feedTime += temp;  
         }
   }
-      
+     
   return feedTime;
 }
 

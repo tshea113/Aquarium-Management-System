@@ -47,10 +47,11 @@ def sendTime(arduino):
 	lastFeed = time.time()
 		
 	# Formats the time for proper display on arduino LCD
-	# MM/DD/YYYY HH:MM\n
+	# tMM/DD/YYYY HH:MM\n
+	# t is the signal bit for a date
 	# Newline signals an end of string to arduino
 	lastFeedString = ""
-	lastFeedString = time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed)) + '\n'
+	lastFeedString = 't' + time.strftime("%m/%d/%y %H:%M",time.localtime(lastFeed)) + '\n'
 	
 	
 	# Send the date to arduino
@@ -98,9 +99,7 @@ def getFeedTimer():
 # Sends the feed siganl
 def feedFish(arduino):
 	arduino.write('f')
-	sleep(0.05)		
-	return talkToArduino(arduino)
-
+	return
 
 # Used to check for time requests from arduino in background
 def arduinoCheck(arduino):
@@ -180,22 +179,24 @@ def runFeeder():
 
 		s.run()
 		
-		try:
-			while 1:
-				# If the feeding has occurred, set for next interval
-				if not s.queue:
-					feedDelay = int(feedTimer[1]) * 3600
-					s.enter(feedDelay, 1, feedFish, (arduino,))
+		while 1:		
+			# If the feeding has occurred, set for next interval
+			if not s.queue:
+				#Check for any changes in the feed schedule
+				feedTimer = getFeedTimer()
+			
+				feedDelay = int(feedTimer[1]) * 3600
+				s.enter(feedDelay, 1, feedFish, (arduino,))
+				
+				# Logs the next feed time for the website
+				with open("/home/pi/fish_feeder/env/fishFeeder/logs/next_feed.txt", "w") as f:
+					f.truncate()
+					f.write(time.strftime("%m/%d/%y %H:%M",time.localtime(time.time() + feedDelay)))
+				
+				s.run()
 					
-					# Logs the next feed time for the website
-					with open("/home/pi/fish_feeder/env/fishFeeder/logs/next_feed.txt", "w") as f:
-						f.truncate()
-						f.write(time.strftime("%m/%d/%y %H:%M",time.localtime(time.time() + feedDelay)))
 
-					s.run()
-					
-		except KeyboardInterrupt:
-			pass
+
 
 
 if __name__ == '__main__':

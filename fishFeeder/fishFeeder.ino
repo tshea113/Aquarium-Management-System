@@ -239,11 +239,12 @@ String getTime()
   //Date is terminated by a newline
   while (Serial.available() > 0)
   {
-        char temp = Serial.read();
-        if (temp != '\n')
-        {
-          feedTime += temp;  
-        }
+        if (Serial.peek() == 't') 
+		{
+			Serial.read();
+			feedTime = Serial.readStringUntil('\n');
+		}
+		else feedTime = "Invalid Signal!";
   }
      
   return feedTime;

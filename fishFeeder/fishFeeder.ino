@@ -30,9 +30,9 @@ AccelStepper stepper1(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
 LiquidCrystal_I2C lcd(0x3F,2,1,0,4,5,6,7);
 
 //Define the buttons
-const int FEED_BUTTON = 10;
-const int DISPLAY_BUTTON = 11;
-const int ROTATIONS_BUTTON = 12;
+const int LEFT_BUTTON = 10;
+const int MID_BUTTON = 11;
+const int RIGHT_BUTTON = 12;
 
 //Define the rotation settings
 const int TWO_TURN = -8192;
@@ -41,6 +41,10 @@ const int HALF_TURN = -2048;
 const int QUARTER_TURN = -1024;
 
 int rotations = ONE_TURN;
+
+// Setup the menu
+// 0(feed), 1(rotations)
+int menu = 0;
 
 //Used for turning the display off and on
 bool isDisplayOn = true;
@@ -60,12 +64,11 @@ void setup()
   lcd.begin(16,2);
   lcd.clear();
   lcd.home();
-  
 
   //Set the button input
-  pinMode(FEED_BUTTON, INPUT_PULLUP);
-  pinMode(DISPLAY_BUTTON, INPUT_PULLUP);
-  pinMode(ROTATIONS_BUTTON, INPUT_PULLUP);
+  pinMode(LEFT_BUTTON, INPUT_PULLUP);
+  pinMode(MID_BUTTON, INPUT_PULLUP);
+  pinMode(RIGHT_BUTTON, INPUT_PULLUP);
 
   //Set up the serial connection
   Serial.begin(9600);
@@ -91,46 +94,61 @@ void setup()
 
 void loop()
 {
-  //Feeds if the button is pressed
-  if (digitalRead(FEED_BUTTON) == LOW)
+  // Cycle through the menus
+  if (digitalRead(RIGHT_BUTTON) == LOW)
   {
-    lastFeedTime = feed(rotations);
-  }
-
-  //Switches the display on and off
-  if (digitalRead(DISPLAY_BUTTON) == LOW)
-  {
-    isDisplayOn = displayFeedTime(lastFeedTime, isDisplayOn);
-    delay(500);
-  }
-
-  //Choose between different feed amounts
-  if (digitalRead(ROTATIONS_BUTTON) == LOW)
-  {
-    switch(rotations)
+    delay(50);
+    if (digitalRead(RIGHT_BUTTON) == HIGH)
     {
-      case TWO_TURN:
-        rotations = QUARTER_TURN;
-        lcd.clear();
-        lcd.print("Quarter turn");
-        break;
-      case ONE_TURN:
-        rotations = TWO_TURN;
-        lcd.clear();
-        lcd.print("Two turns");
-        break;
-      case HALF_TURN: 
-        rotations = ONE_TURN;
-        lcd.clear();
-        lcd.print("One turn");
-        break;
-      case QUARTER_TURN:
-        rotations = HALF_TURN;
-        lcd.clear();
-        lcd.print("Half turn");
-        break;  
+      if (menu < 1) menu++;
+      else menu = 0;
+      printMenu(menu, lastFeedTime, rotations);
     }
-    delay(500);
+  }
+  
+  // Feed the fish
+  if (digitalRead(LEFT_BUTTON) == LOW && menu == 0)
+  {
+    delay(50);
+    if (digitalRead(LEFT_BUTTON) == HIGH)
+    {
+    lastFeedTime = feed(rotations);
+    }
+  }
+
+  // Switch the display on and off
+  if (digitalRead(MID_BUTTON) == LOW)
+  {
+    delay(50);
+    if (digitalRead(MID_BUTTON) == HIGH)
+    {
+      isDisplayOn = displayToggle(lastFeedTime, rotations, isDisplayOn, menu); 
+    }
+  }
+
+  // Choose between different feed amounts
+  if (digitalRead(LEFT_BUTTON) == LOW && menu == 1)
+  {
+    delay(50);
+    if (digitalRead(LEFT_BUTTON) == HIGH)
+    {
+      switch(rotations)
+      {
+        case TWO_TURN:
+          rotations = QUARTER_TURN;
+          break;
+        case ONE_TURN:
+          rotations = TWO_TURN;
+          break;
+        case HALF_TURN: 
+          rotations = ONE_TURN;
+          break;
+        case QUARTER_TURN:
+          rotations = HALF_TURN;
+          break;  
+      }
+      printMenu(menu, lastFeedTime, rotations); 
+    }
   }
   
   //Also feed if pi triggers
@@ -189,9 +207,9 @@ String feed(int rotations)
 }
 
 /**
-   This prints the last feed time to the LCD
+   This toggles the display on and off
 */
-bool displayFeedTime(String lastFeedTime, bool isDisplayOn)
+bool displayToggle(String lastFeedTime, int rotations, bool isDisplayOn, int menu)
 {
   //Turn the display off if it is on
   if (isDisplayOn)
@@ -202,23 +220,13 @@ bool displayFeedTime(String lastFeedTime, bool isDisplayOn)
 
     return isDisplayOn;
   }
-  //Otherwise turn the display on and display last feed time if available
+  //Otherwise turn the display on and display the menu
   else
   {
     lcd.display();
     lcd.clear();
     isDisplayOn = true;
-    //If the device was just turned on there will be no last feed time
-    if (lastFeedTime.equals(""))
-    {
-      lcd.print("Not fed yet!");
-    }
-    else
-    {
-      lcd.print("Last fed at:");
-      lcd.setCursor(0,1);
-      lcd.print(lastFeedTime);
-    }
+    printMenu(menu, lastFeedTime, rotations);
     lcd.setBacklight(HIGH);
     return isDisplayOn;
   }
@@ -248,5 +256,49 @@ String getTime()
   }
      
   return feedTime;
+}
+
+/**
+ * Prints the current menu
+ */
+void printMenu(int menu, String lastFeedTime, int rotations)
+{
+  lcd.clear();
+  // Feed menu
+  if (menu == 0)
+  {
+    //If the device was just turned on there will be no last feed time
+    if (lastFeedTime.equals(""))
+    {
+      lcd.print("Not fed yet!");
+    }
+    else
+    {
+      lcd.print("Last fed at:");
+      lcd.setCursor(0,1);
+      lcd.print(lastFeedTime);
+    }
+  }
+  // Rotations menu
+  else if (menu == 1)
+  {
+    lcd.print("Feed Amount:");
+    lcd.setCursor(0,1);
+    switch(rotations)
+    {
+      case TWO_TURN:
+        lcd.print("Two Turns");
+        break;
+      case ONE_TURN:
+        lcd.print("One turn");
+        break;
+      case HALF_TURN: 
+        lcd.print("Half turn");
+        break;
+      case QUARTER_TURN:
+        lcd.print("Quarter turn");
+        break;  
+    }
+  }
 }
 

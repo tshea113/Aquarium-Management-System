@@ -1,6 +1,6 @@
 # Aquarium Management System
 ## Description:
-An aquarium management system powered by Raspberry Pi and Arduino.  Feeds fish in scheduled intervals according to user defined start time and time between feedings as well as at the press of a hardware button.  Able to remotely monitor and change feed schedule from a website hosted on the Raspberry Pi.  More features currently in development.
+An aquarium management system powered by Raspberry Pi and Arduino.  Feeds fish in scheduled intervals according to user defined start time and time between feedings as well as at the press of a hardware button.  Able to remotely monitor and change feed schedule from a website hosted on the Raspberry Pi.  More features currently in development.  Planned features include a relay module to monitor water level, light cycling, and temperature overheat protection.
 
 ## Parts:
 - Arduino

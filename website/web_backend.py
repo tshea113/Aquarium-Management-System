@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, flash, url_for, Response
 import feeder_control
 from multiprocessing import Process
 from flask_basicauth import BasicAuth
-from camera import Camera
+#from camera import Camera
 
 
 app = Flask(__name__)
@@ -58,7 +58,7 @@ def gen(camera):
 @app.before_first_request
 def setupFeeder():
 	global p   
-        p = Process(target=feeder_control.runFeeder)
+	p = Process(target=feeder_control.runFeeder)
 	p.daemon=True
 	p.start()
 
@@ -88,10 +88,9 @@ def change_schedule():
         if feedParams[0] > 0 & feedParams[0] < 23 & feedParams[1] > 0:
             with open('/home/pi/fish_feeder/env/fishFeeder/logs/feed_time.txt', 'w') as f:
             	f.write(str(feedParams[0]) + ' ' + str(feedParams[1]))
-
             resetFeeder()
 
-	    return render_template('index.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)
+            return render_template('index.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)
 
         else:
             return render_template('change_schedule.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)

@@ -17,19 +17,19 @@ def setFeedTime():
 	
 	# Hour needs to be in 24 hour format (0 to 23)
 	while feedHour < 0 or feedHour > 23:
-		print "Enter the hour in 24 hour format at which you wish to first feed the fish:"
+		print ("Enter the hour in 24 hour format at which you wish to first feed the fish:")
 		feedHour = input()
 		
 		if feedHour < 0 or feedHour > 23:
-			print "Error: Invalid hour!"
+			print ("Error: Invalid hour!")
 	
 	# Cannot have negative interval
 	while feedInterval < 0:
-		print "Enter the desired time interval in hours between feedings:"
+		print ("Enter the desired time interval in hours between feedings:")
 		feedInterval = input()
 		
 		if feedInterval < 0:
-			print "Error: Invalid interval!"
+			print ("Error: Invalid interval!")
 	
 	# Save the feed parameters to a text file
 	newTimes = str(feedHour) + " " + str(feedInterval)

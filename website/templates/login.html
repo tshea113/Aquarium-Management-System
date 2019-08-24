@@ -1,0 +1,17 @@
+<!-- templates/login.html-->
+
+{% extends "base.html" %}
+
+{% block mainContent %}
+
+<form method="POST" action="/login">
+    <input type="email" name="email" placeholder="Your Email" autofocus="">
+    <input type="password" name="password" placeholder="Your Password">
+    <label class="checkbox">
+        <input type="checkbox">
+        Remember me
+    </label>
+    <button>Login</button>
+</form>
+
+{% endblock %}

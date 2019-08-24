@@ -1,7 +1,13 @@
-from flask import Flask, render_template, request, flash, url_for, Response
+from flask import Flask, render_template, request, flash, url_for, Response, Blueprint
+
+from flask_basicauth import BasicAuth
+
+from flask_sqlalchemy import SQLAlchemy
+
+from . import db
+
 import feeder_control
 from multiprocessing import Process
-from flask_basicauth import BasicAuth
 #from camera import Camera
 
 
@@ -9,8 +15,6 @@ app = Flask(__name__)
 
 app.config['BASIC_AUTH_USERNAME'] = 'tyler'
 app.config['BASIC_AUTH_PASSWORD'] = 'aquar1umf33d3r!'
-
-basic_auth = BasicAuth(app)
 
 p=0
 
@@ -70,7 +74,6 @@ def index():
     isAlive = feederActive(p.is_alive())
     feedInfo = getFeedInfo()
     return render_template('index.html', lastFeedTime = feedInfo[0], nextFeedTime = feedInfo[1], status = isAlive)
-
 
 # Handles sending the schedule params to the text file for the feeder
 @app.route('/change_schedule', methods=['GET', 'POST'])

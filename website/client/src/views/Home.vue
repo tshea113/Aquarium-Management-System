@@ -8,9 +8,9 @@
 import Welcome from '@/components/Welcome';
 
 export default {
-    name: 'home',
-    components: {
-        Welcome,
-    }
+  name: 'home',
+  components: {
+    Welcome,
+  },
 };
 </script>

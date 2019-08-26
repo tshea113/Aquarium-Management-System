@@ -18,7 +18,7 @@
             <v-app-bar-nav-icon class="hidden-md-and-up" @click="drawer = !drawer"></v-app-bar-nav-icon>
             <v-spacer class="hidden-sm-and-down"></v-spacer>
             <v-btn dark @click.stop="loginWindow = true" class="hidden-sm-and-down mx-2">LOGIN</v-btn>
-            <v-btn dark @click.stop="signupWindow = true" class="hidden-sm-and-down mx-2">SIGNUP</v-btn>
+            <v-btn dark @click.stop="signupWindow = true" class="hidden-sm-and-down mx-2">SIGN UP</v-btn>
             <login v-bind:dialog='loginWindow' @closeLogin="closeLogin" />
             <signup v-bind:dialog='signupWindow' @closeSignup="closeSignup" />
         </v-app-bar>
@@ -26,49 +26,46 @@
 </template>
 
 <script>
-import Login from './Login'
-import Signup from './Signup'
+import Login from './Login';
+import Signup from './Signup';
 
 export default {
-    name: 'AppNavigation',
-    data() {
-        return {
-            drawer: false,
-            loginWindow: false,
-            signupWindow: false,
-            items: [
-                {
-                    title: 'Login',
-                    icon: 'mdi-account-key',
-                },
-                {
-                    title: 'Sign Up',
-                    icon: 'mdi-account-plus',
-                },
-            ],
-        };
-    },
-    components: {
-        Login, Signup
-    },
-    methods: {
-        closeLogin(e) {
-            this.loginWindow = e
+  name: 'AppNavigation',
+  data() {
+    return {
+      drawer: false,
+      loginWindow: false,
+      signupWindow: false,
+      items: [
+        {
+          title: 'Login',
+          icon: 'mdi-account-key',
         },
-        closeSignup(e) {
-            this.signupWindow = e
+        {
+          title: 'Sign Up',
+          icon: 'mdi-account-plus',
         },
-        closeWindow(whichWindow) {
-            if (whichWindow === 'Login')
-            {
-                this.loginWindow = true;
-            }
-            else if (whichWindow === 'Sign Up')
-            {
-                this.signupWindow = true;
-            }
-        }
-    }
+      ],
+    };
+  },
+  components: {
+    Login, Signup,
+  },
+  methods: {
+    closeLogin(e) {
+      this.loginWindow = e;
+    },
+    closeSignup(e) {
+      this.signupWindow = e;
+    },
+    closeWindow(whichWindow) {
+      if (whichWindow === 'Login') {
+        this.loginWindow = true;
+      } else if (whichWindow === 'Sign Up') {
+        this.signupWindow = true;
+      }
+    },
+  },
 };
 </script>
 

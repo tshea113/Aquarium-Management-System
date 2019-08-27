@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_security import Security, SQLAlchemyUserDatastore, login_required
 from flask_mail import Mail
 from flask_cors import CORS
+from backend.config import *
 
 db = SQLAlchemy()
 mail = Mail()
@@ -13,21 +14,8 @@ def create_app():
 
     # Create app
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'LGjBbVL9_5HwafdH-u6_OA'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-    # Flask-Security Config
-    app.config['SECURITY_REGISTERABLE'] = True
-    app.config['SECURITY_PASSWORD_SALT'] = 'bms7IDKeC5cZrDBnJgieGw'
-    app.config['SECURITY_EMAIL_SENDER'] = 'aquariummanagementsystem@gmail.com'
-
-    # Mail Config
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USE_TLS'] = False
-    app.config['MAIL_USE_SSL'] = True
-    app.config['MAIL_USERNAME'] = 'aquariummanagementsystem@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'ekovpqafntidyhtz'
+    app.config.from_object('backend.DevelopmentConfig')
 
     db.init_app(app)
     mail.init_app(app)

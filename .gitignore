@@ -48,3 +48,4 @@ Temporary Items
 .vscode
 website/backend/__pycache__
 website/backend/db.sqlite
+website/backend/config.py

@@ -15,12 +15,14 @@ def create_app():
     # Create app
     app = Flask(__name__)
 
+    # Configure app
     app.config.from_object('backend.DevelopmentConfig')
 
+    # Initialize the components
     db.init_app(app)
     mail.init_app(app)
 
-    # enable CORS
+    # Enable CORS
     CORS(app, resources={r'/*': {'origins': '*'}})
 
     from .models import User, Role
@@ -29,11 +31,11 @@ def create_app():
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     app.security = Security(app, user_datastore)
 
-    # blueprint for auth routes in our app
+    # Blueprint for auth routes in our app
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
-    # blueprint for non-auth parts of app
+    # Blueprint for non-auth parts of app
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 

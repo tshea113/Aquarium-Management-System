@@ -19,9 +19,9 @@ $RECYCLE.BIN/
 
 # Excluded directories/files
 .vscode
-website/backend/db.sqlite
-website/backend/config.py
-website/backend/__pycache__/
+**/db.sqlite
+**/config.py
+**/__pycache__/
 website/backend/static/
 website/backend/templates/
 

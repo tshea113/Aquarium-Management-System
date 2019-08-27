@@ -22,8 +22,6 @@ $RECYCLE.BIN/
 **/db.sqlite
 **/config.py
 **/__pycache__/
-website/backend/static/
-website/backend/templates/
 
 # =========================
 # Operating System Files

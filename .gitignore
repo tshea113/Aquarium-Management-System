@@ -17,6 +17,14 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Excluded directories/files
+.vscode
+website/backend/db.sqlite
+website/backend/config.py
+website/backend/__pycache__
+website/backend/static
+website/backend/templates
+
 # =========================
 # Operating System Files
 # =========================
@@ -45,7 +53,3 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-.vscode
-website/backend/__pycache__
-website/backend/db.sqlite
-website/backend/config.py

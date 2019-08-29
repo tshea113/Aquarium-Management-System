@@ -28,8 +28,8 @@ def create_app():
     from .models import User, Role
 
     # Configure Security
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-    app.security = Security(app, user_datastore)
+    #user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+    #app.security = Security(app, user_datastore)
 
     # Blueprint for auth routes in our app
     from .auth import auth as auth_blueprint

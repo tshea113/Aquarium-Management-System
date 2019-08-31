@@ -12,6 +12,38 @@ import jwt
 
 auth = Blueprint('auth', __name__)
 
+def token_required(f):
+    @wraps(f)
+    def _verify(*args, **kwargs):
+        auth_headers = request.headers.get('Authorization', '').split()
+
+        invalid_msg = {
+            'message': 'Invalid token. Registeration and / or authentication required',
+            'authenticated': False
+        }
+        expired_msg = {
+            'message': 'Expired token. Reauthentication required.',
+            'authenticated': False
+        }
+
+        if len(auth_headers) != 2:
+            return redirect('/')
+
+        try:
+            token = auth_headers[1]
+            data = jwt.decode(token, Config.SECRET_KEY)
+            user = User.query.filter_by(email=data['sub']).first()
+            if not user:
+                return redirect('/')
+            return f(user, *args, **kwargs)
+        except jwt.ExpiredSignatureError:
+            return redirect('/')
+        except (jwt.InvalidTokenError, Exception) as e:
+            print(e)
+            return redirect('/')
+
+    return _verify
+
 @auth.route('/signup', methods=['POST'])
 def register():
     # Get the registration data from the request
@@ -62,3 +94,9 @@ def login():
         Config.SECRET_KEY)
 
     return jsonify({ 'token': token.decode('UTF-8') })
+
+@auth.route('/getDashboard', methods=['GET'])
+@token_required
+def dashboard(current_user):
+    message = "Hello, " + current_user.first_name
+    return jsonify({ 'message': message })

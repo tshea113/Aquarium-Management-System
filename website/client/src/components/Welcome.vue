@@ -1,10 +1,10 @@
 <template>
-    <v-container fluid fill-height class="welcome" style="max-height: 100vh;">
-        <v-layout justify-center align-center column pa-5>
-            <div id="content" class="display-2 font-weight-black white--text text-xs-center mb-3">AQUARIUM MANAGEMENT SYSTEM</div>
-            <div id="content" class="headline font-weight-bold white--text text-xs-center">The all-in-one solution for remote aquarium management.</div>
-        </v-layout>
-    </v-container>
+  <v-container id="welcome" fluid fill-height style="max-height: 100vh;">
+    <v-layout justify-center align-center column pa-5>
+      <div id="content" class="display-2 font-weight-black white--text text-xs-center mb-3">AQUARIUM MANAGEMENT SYSTEM</div>
+      <div id="content" class="headline font-weight-bold white--text text-xs-center">The all-in-one solution for remote aquarium management.</div>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -14,8 +14,8 @@ export default {
 </script>
 
 <style scoped>
-.welcome {
-    background: url('../assets/koi-background.jpg');
+#welcome {
+    background-image: url('../../public/koi-background.jpg');
     background-size: cover;
     width: 100%;
     height: 100%;

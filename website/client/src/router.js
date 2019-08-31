@@ -5,7 +5,7 @@ import Dashboard from './views/Dashboard.vue'
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
@@ -17,7 +17,29 @@ export default new Router({
     {
       path: '/dashboard',
       name: 'dashboard',
+      meta: { requiresAuth: true },
       component: Dashboard,
-    }
+    },
+    {
+      path: '*',
+      redirect: '/'
+    },
   ],
 });
+
+/*
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (window.$store) {
+      next();
+    } else {
+      next();
+    }
+  } else {
+    next(); // make sure to always call next()!
+  }
+});
+*/
+export default router;

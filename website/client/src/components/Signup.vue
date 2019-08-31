@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="600px">
+  <v-dialog v-model="signupScreen" persistent max-width="600px">
     <v-card>
         <v-toolbar color="deep-orange darken-4" class="elevation-5" prominent dark>
           <v-toolbar-title class="display-1 mx-4">Sign up</v-toolbar-title>
@@ -61,7 +61,7 @@
         </v-card-text>
         <v-card-actions>
           <div class="flex-grow-1"></div>
-          <v-btn color="blue darken-1" text @click="closeSignup">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="this.closeSignup">Close</v-btn>
           <v-btn color="blue darken-1" text @click="signup">Submit</v-btn>
         </v-card-actions>
     </v-card>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   name: 'Signup',
@@ -85,20 +85,23 @@ export default {
       success: false,
     };
   },
-  props: {
-    dialog: Boolean,
+  computed: {
+    ...mapState([
+      'signupScreen',
+    ]),
   },
   components: {
   },
   methods: {
-    closeSignup() {
-      this.$emit('closeSignup', false);
-    },
+    ...mapActions([
+      'setAccessToken',
+      'closeSignup',
+    ]),
     signup() {
       this.alert = false;
       this.success = false;
 
-      axios.post('http://127.0.0.1:5000/signup', {
+      this.$http.post('http://127.0.0.1:5000/signup', {
         first_name: this.first_name,
         last_name: this.last_name,
         email: this.email,

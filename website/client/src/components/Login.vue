@@ -12,14 +12,6 @@
       >
         {{ err_msg }}
       </v-alert>
-      <v-alert
-        class="ma-1"
-        v-model="success"
-        type="success"
-        dense
-      >
-        {{ succ_msg }}
-      </v-alert>
       <v-card-text>
         <v-container>
           <v-row>
@@ -64,9 +56,7 @@ export default {
       email: '',
       password: '',
       err_msg: '',
-      succ_msg: '',
       alert: false,
-      success: false,
     };
   },
   computed: {
@@ -83,17 +73,16 @@ export default {
     ]),
     login() {
       this.alert = false;
-      this.success = false;
 
       this.$http.post('http://127.0.0.1:5000/login', {
         email: this.email,
         password: this.password,
       })
         .then((res) => {
-          this.succ_msg = 'Logged in!';
-          this.success = true;
           this.setAccessToken(res.data.token);
           this.$router.push({ path : '/dashboard' });
+          this.email = '';
+          this.password = '';
           this.closeLogin();
         })
         .catch((err) => {

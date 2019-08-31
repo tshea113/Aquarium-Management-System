@@ -3,7 +3,7 @@
         <v-navigation-drawer app v-model="drawer" class="deep-orange darken-4" dark disable-resize-watcher>
             <v-list nav>
                 <template v-for="(item, index) in items">
-                    <v-list-item :key="index" @click.stop="openWindow(item.title)" link>
+                    <v-list-item v-if="isLoggedIn(item.accountOnly)" :key="index" @click.stop="navbarClick(item.title)" link>
                         <v-list-item-icon>
                             <v-icon v-text="item.icon"></v-icon>
                         </v-list-item-icon>
@@ -40,12 +40,19 @@ export default {
       items: [
         {
           title: 'Login',
-          icon: 'mdi-account-key',
+          icon: 'mdi-login',
+          accountOnly: false,
         },
         {
           title: 'Sign Up',
           icon: 'mdi-account-plus',
+          accountOnly: false,
         },
+        {
+          title: 'Logout',
+          icon: 'mdi-logout',
+          accountOnly: true,
+        }
       ],
     };
   },
@@ -53,6 +60,7 @@ export default {
     ...mapState([
       'loginScreen',
       'signupScreen',
+      'loggedIn',
     ]),
   },
   components: {
@@ -62,14 +70,22 @@ export default {
     ...mapActions([
       'openLogin',
       'openSignup',
+      'logout',
     ]),
-    openWindow(whichWindow) {
-      if (whichWindow === 'LOGIN') {
+    navbarClick(title) {
+      if (title === 'Login') {
         this.openLogin();
       }
-      else if (whichWindow === 'SIGNUP') {
+      else if (title === 'Sign Up') {
         this.openSignup();
       }
+      else if (title === 'Logout') {
+        this.logout();
+        this.$router.push({ path : '/' });
+      }
+    },
+    isLoggedIn(accountOnly) {
+      return (this.loggedIn && accountOnly) || (!this.loggedIn && !accountOnly);
     },
   },
 };

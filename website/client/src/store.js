@@ -8,6 +8,7 @@ export default new Vuex.Store({
     accessToken: null,
     loginScreen: false,
     signupScreen: false,
+    loggedIn: false,
   },
   mutations: {
     updateAccessToken: (state, accessToken) => {
@@ -23,10 +24,16 @@ export default new Vuex.Store({
   actions: {
     setAccessToken({ commit }, token) {
       localStorage.setItem('token', token);
+      this.state.loggedIn = true;
       commit('updateAccessToken', token);
     },
     fetchAccessToken({ commit }) {
       commit('updateAccessToken', localStorage.getItem('token'));
+    },
+    logout({ commit }) {
+      localStorage.clear();
+      this.state.loggedIn = false;
+      commit('updateAccessToken', null);
     },
     openLogin({ commit }) {
       commit('toggleLogin', true);

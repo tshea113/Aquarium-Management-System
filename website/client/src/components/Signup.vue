@@ -7,7 +7,7 @@
         <v-alert
           class="ma-1"
           v-model="alert"
-          type="error" 
+          type="error"
           dense
         >
           {{ err_msg }}
@@ -15,7 +15,7 @@
         <v-alert
           class="ma-1"
           v-model="success"
-          type="success" 
+          type="success"
           dense
         >
           {{ succ_msg }}
@@ -108,7 +108,7 @@ export default {
         password: this.password,
       })
         .then((res) => {
-          this.succ_msg = "Account successfully created!"
+          this.succ_msg = 'Account successfully created!';
           this.success = true;
         })
         .catch((err) => {

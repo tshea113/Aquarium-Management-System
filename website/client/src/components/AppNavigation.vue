@@ -1,9 +1,19 @@
 <template>
     <span>
-        <v-navigation-drawer app v-model="drawer" class="deep-orange darken-4" dark disable-resize-watcher>
+        <v-navigation-drawer
+          app v-model="drawer"
+          class="deep-orange darken-4"
+          dark
+          disable-resize-watcher
+        >
             <v-list nav>
                 <template v-for="(item, index) in items">
-                    <v-list-item v-if="isLoggedIn(item.accountOnly)" :key="index" @click.stop="navbarClick(item.title)" link>
+                    <v-list-item
+                      v-if="isLoggedIn(item.accountOnly)"
+                      :key="index"
+                      @click.stop="navbarClick(item.title)"
+                      link
+                    >
                         <v-list-item-icon>
                             <v-icon v-text="item.icon"></v-icon>
                         </v-list-item-icon>
@@ -15,10 +25,43 @@
             </v-list>
         </v-navigation-drawer>
         <v-app-bar app dense color="gray darken-4" class="elevation-5" dark>
-            <v-app-bar-nav-icon class="hidden-md-and-up" @click="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon
+              class="hidden-md-and-up"
+              @click="drawer=!drawer"
+            ></v-app-bar-nav-icon>
             <v-spacer class="hidden-sm-and-down"></v-spacer>
-            <v-btn dark @click.stop="openWindow('LOGIN')" class="hidden-sm-and-down mx-2">LOGIN</v-btn>
-            <v-btn dark @click.stop="openWindow('SIGNUP')" class="hidden-sm-and-down mx-2">SIGN UP</v-btn>
+            <v-btn
+              v-if="isLoggedIn(false)"
+              dark
+              @click.stop="navbarClick('Login')"
+              class="hidden-sm-and-down mx-2"
+            >
+              LOGIN
+            </v-btn>
+            <v-btn
+              v-if="isLoggedIn(false)"
+              dark
+              @click.stop="navbarClick('Sign Up')"
+              class="hidden-sm-and-down mx-2"
+            >
+              SIGN UP
+            </v-btn>
+            <v-btn
+              v-if="isLoggedIn(true)"
+              dark
+              @click.stop="navbarClick('Account Info')"
+              class="hidden-sm-and-down mx-2"
+            >
+              ACCOUNT
+            </v-btn>
+                        <v-btn
+              v-if="isLoggedIn(true)"
+              dark
+              @click.stop="navbarClick('Logout')"
+              class="hidden-sm-and-down mx-2"
+            >
+              LOGOUT
+            </v-btn>
             <login/>
             <signup/>
         </v-app-bar>
@@ -26,9 +69,9 @@
 </template>
 
 <script>
-import Login from './Login';
-import Signup from './Signup';
 import { mapActions, mapState } from 'vuex';
+import Login from './Login.vue';
+import Signup from './Signup.vue';
 
 export default {
   name: 'AppNavigation',
@@ -52,7 +95,7 @@ export default {
           title: 'Logout',
           icon: 'mdi-logout',
           accountOnly: true,
-        }
+        },
       ],
     };
   },
@@ -75,13 +118,11 @@ export default {
     navbarClick(title) {
       if (title === 'Login') {
         this.openLogin();
-      }
-      else if (title === 'Sign Up') {
+      } else if (title === 'Sign Up') {
         this.openSignup();
-      }
-      else if (title === 'Logout') {
+      } else if (title === 'Logout') {
         this.logout();
-        this.$router.push({ path : '/' });
+        this.$router.push({ path: '/' });
       }
     },
     isLoggedIn(accountOnly) {

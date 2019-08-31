@@ -80,7 +80,7 @@ export default {
       })
         .then((res) => {
           this.setAccessToken(res.data.token);
-          this.$router.push({ path : '/dashboard' });
+          this.$router.push({ path: '/dashboard' });
           this.email = '';
           this.password = '';
           this.closeLogin();

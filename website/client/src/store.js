@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
@@ -19,7 +19,7 @@ export default new Vuex.Store({
     },
     toggleSignup: (state, action) => {
       state.signupScreen = action;
-    }
+    },
   },
   actions: {
     setAccessToken({ commit }, token) {
@@ -28,6 +28,11 @@ export default new Vuex.Store({
       commit('updateAccessToken', token);
     },
     fetchAccessToken({ commit }) {
+      if (localStorage.getItem('token')) {
+        this.state.loggedIn = true;
+      } else {
+        this.state.loggedIn = false;
+      }
       commit('updateAccessToken', localStorage.getItem('token'));
     },
     logout({ commit }) {
@@ -47,5 +52,5 @@ export default new Vuex.Store({
     closeSignup({ commit }) {
       commit('toggleSignup', false);
     },
-  }
+  },
 });

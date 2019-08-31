@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
-import Dashboard from './views/Dashboard.vue'
+import Dashboard from './views/Dashboard.vue';
+import store from './store';
 
 Vue.use(Router);
 
@@ -22,24 +23,33 @@ const router = new Router({
     },
     {
       path: '*',
-      redirect: '/'
+      redirect: '/',
     },
   ],
 });
 
-/*
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
-    if (window.$store) {
-      next();
-    } else {
-      next();
-    }
-  } else {
-    next(); // make sure to always call next()!
-  }
+  store.dispatch('fetchAccessToken')
+    .then((res) => {
+      if (to.matched.some(record => record.meta.requiresAuth)) {
+        // For routes that require auth
+        if (store.state.loggedIn) {
+          if (to.path === '/') {
+            next('/dashboard');
+          } else {
+            next();
+          }
+        } else {
+          next('/');
+        }
+      } else {
+        if (to.path === '/' && store.state.loggedIn) {
+          next('/dashboard');
+        } else {
+        next();
+        }
+      }
+    });
 });
-*/
+
 export default router;

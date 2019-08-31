@@ -18,14 +18,14 @@ export default {
   },
   methods: {
     ...mapActions([
-      'fetchAccessToken'
+      'fetchAccessToken',
     ]),
     getInfo() {
       this.fetchAccessToken();
-      this.$http.get('http://127.0.0.1:5000/getDashboard',{
-        headers: { 
-          Authorization: "Bearer " + this.$store.state.accessToken
-          }
+      this.$http.get('http://127.0.0.1:5000/getDashboard', {
+        headers: {
+          Authorization: `Bearer ${this.$store.state.accessToken}`,
+        },
       })
         .then((res) => {
           this.message = res.data.message;
@@ -36,7 +36,7 @@ export default {
     },
   },
   beforeMount() {
-    this.getInfo()
+    this.getInfo();
   },
 };
 </script>

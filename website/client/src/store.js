@@ -5,12 +5,23 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    account: {
+      firstName: null,
+      lastName: null,
+      email: null,
+    },
     accessToken: null,
     loginScreen: false,
     signupScreen: false,
+    accountScreen: false,
     loggedIn: false,
   },
   mutations: {
+    updateAccount: (state, accountInfo) => {
+      state.account.firstName = accountInfo.firstName;
+      state.account.lastName = accountInfo.lastName;
+      state.account.email = accountInfo.email;
+    },
     updateAccessToken: (state, accessToken) => {
       state.accessToken = accessToken;
     },
@@ -20,8 +31,21 @@ export default new Vuex.Store({
     toggleSignup: (state, action) => {
       state.signupScreen = action;
     },
+    toggleAccount: (state, action) => {
+      state.accountScreen = action;
+    }
   },
   actions: {
+    setAccount({ commit }, accountInfo) {
+      commit('updateAccount', accountInfo);
+    },
+    deleteAccount({ commit }) {
+      commit('updateAccount', {
+        firstName: null,
+        lastName: null,
+        email: null,
+      });
+    },
     setAccessToken({ commit }, token) {
       localStorage.setItem('token', token);
       this.state.loggedIn = true;
@@ -51,6 +75,12 @@ export default new Vuex.Store({
     },
     closeSignup({ commit }) {
       commit('toggleSignup', false);
+    },
+    openAccount({ commit }) {
+      commit('toggleAccount', true);
+    },
+    closeAccount({ commit }) {
+      commit('toggleAccount', false);
     },
   },
 });

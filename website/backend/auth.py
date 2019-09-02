@@ -95,8 +95,11 @@ def login():
 
     return jsonify({ 'token': token.decode('UTF-8') })
 
-@auth.route('/getDashboard', methods=['GET'])
+@auth.route('/getUser', methods=['GET'])
 @token_required
-def dashboard(current_user):
-    message = "Hello, " + current_user.first_name
-    return jsonify({ 'message': message })
+def dashboard(current_user): 
+    return jsonify({
+        'firstName': current_user.first_name, 
+        'lastName': current_user.last_name,
+        'email': current_user.email,
+        })

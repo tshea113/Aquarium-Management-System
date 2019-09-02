@@ -49,7 +49,7 @@
             <v-btn
               v-if="isLoggedIn(true)"
               dark
-              @click.stop="navbarClick('Account Info')"
+              @click.stop="navbarClick('Account')"
               class="hidden-sm-and-down mx-2"
             >
               ACCOUNT
@@ -64,6 +64,7 @@
             </v-btn>
             <login/>
             <signup/>
+            <account/>
         </v-app-bar>
     </span>
 </template>
@@ -72,6 +73,7 @@
 import { mapActions, mapState } from 'vuex';
 import Login from './Login.vue';
 import Signup from './Signup.vue';
+import Account from './Account.vue';
 
 export default {
   name: 'AppNavigation',
@@ -92,6 +94,11 @@ export default {
           accountOnly: false,
         },
         {
+          title: 'Account',
+          icon: 'mdi-account',
+          accountOnly: true,
+        },
+        {
           title: 'Logout',
           icon: 'mdi-logout',
           accountOnly: true,
@@ -103,19 +110,23 @@ export default {
     ...mapState([
       'loginScreen',
       'signupScreen',
+      'accountScreen',
       'loggedIn',
     ]),
   },
   components: {
-    Login, Signup,
+    Login, Signup, Account
   },
   methods: {
     ...mapActions([
       'openLogin',
       'openSignup',
+      'openAccount',
       'logout',
     ]),
     navbarClick(title) {
+      this.drawer = false;
+      
       if (title === 'Login') {
         this.openLogin();
       } else if (title === 'Sign Up') {
@@ -123,6 +134,8 @@ export default {
       } else if (title === 'Logout') {
         this.logout();
         this.$router.push({ path: '/' });
+      } else if (title === 'Account') {
+        this.openAccount();
       }
     },
     isLoggedIn(accountOnly) {

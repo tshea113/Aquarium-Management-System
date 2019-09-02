@@ -1,11 +1,11 @@
 <template>
     <span>
-        <h1>{{ message }}</h1>
+        <h1>Hello, {{ this.account.firstName }}</h1>
     </span>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   name: 'dashboard',
@@ -14,24 +14,27 @@ export default {
       message: '',
     };
   },
+  computed: {
+    ...mapState([
+      'account',
+    ]),
+  },
   components: {
   },
   methods: {
     ...mapActions([
       'fetchAccessToken',
+      'setAccount',
     ]),
     getInfo() {
       this.fetchAccessToken();
-      this.$http.get('http://127.0.0.1:5000/getDashboard', {
+      this.$http.get('http://127.0.0.1:5000/getUser', {
         headers: {
           Authorization: `Bearer ${this.$store.state.accessToken}`,
         },
       })
         .then((res) => {
-          this.message = res.data.message;
-        })
-        .catch((err) => {
-          this.message = err.response.data;
+          this.setAccount(res.data);
         });
     },
   },

@@ -43,12 +43,12 @@ router.beforeEach((to, from, next) => {
           next('/');
         }
       } else {
-        if (to.path === '/' && store.state.loggedIn) {
-          next('/dashboard');
-        } else {
         next();
-        }
       }
+    })
+    .catch((err) => {
+      console.log(err);
+      next('/');
     });
 });
 

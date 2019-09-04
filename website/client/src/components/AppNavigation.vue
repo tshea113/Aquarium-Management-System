@@ -111,7 +111,7 @@ export default {
       'loginScreen',
       'signupScreen',
       'accountScreen',
-      'loggedIn',
+      'account',
     ]),
   },
   components: {
@@ -139,7 +139,7 @@ export default {
       }
     },
     isLoggedIn(accountOnly) {
-      return (this.loggedIn && accountOnly) || (!this.loggedIn && !accountOnly);
+      return (this.account.email && accountOnly) || (!this.account.email && !accountOnly);
     },
   },
 };

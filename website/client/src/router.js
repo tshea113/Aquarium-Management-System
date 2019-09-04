@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Dashboard from './views/Dashboard.vue';
 import store from './store';
+import axios from 'axios';
 
 Vue.use(Router);
 
@@ -29,25 +30,40 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  store.dispatch('fetchAccessToken')
+  store.dispatch('fetchAccessToken');
+  axios.get('http://127.0.0.1:5000/getUser', {
+    headers: {
+      Authorization: `Bearer ${store.state.accessToken}`,
+    },
+  })
     .then((res) => {
+      store.dispatch('setAccount', res.data);
+      
       if (to.matched.some(record => record.meta.requiresAuth)) {
-        // For routes that require auth
-        if (store.state.loggedIn) {
-          if (to.path === '/') {
-            next('/dashboard');
-          } else {
-            next();
-          }
+        // For routes that required authorization
+        if (store.state.account.email) {
+          next();
         } else {
+          // Redirect home for unauthorized users
           next('/');
         }
       } else {
+        // For routes that do not required authorizaiton
+        // If user is logged in redirect home page to dashboard
+        if (store.state.account.email && (to.path === '/'))
+        {
+          next('/dashboard');
+        }
+        // Proceed otherwise
         next();
       }
     })
     .catch((err) => {
-      console.log(err);
+      store.dispatch('setAccount', {
+        firstName: null, 
+        lastName: null, 
+        email: null
+      });
       next('/');
     });
 });

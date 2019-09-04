@@ -26,20 +26,6 @@ export default {
       'fetchAccessToken',
       'setAccount',
     ]),
-    getInfo() {
-      this.fetchAccessToken();
-      this.$http.get('http://127.0.0.1:5000/getUser', {
-        headers: {
-          Authorization: `Bearer ${this.$store.state.accessToken}`,
-        },
-      })
-        .then((res) => {
-          this.setAccount(res.data);
-        });
-    },
-  },
-  beforeMount() {
-    this.getInfo();
   },
 };
 </script>

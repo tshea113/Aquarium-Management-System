@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -14,7 +15,6 @@ export default new Vuex.Store({
     loginScreen: false,
     signupScreen: false,
     accountScreen: false,
-    loggedIn: false,
   },
   mutations: {
     updateAccount: (state, accountInfo) => {
@@ -52,11 +52,6 @@ export default new Vuex.Store({
       commit('updateAccessToken', token);
     },
     fetchAccessToken({ commit }) {
-      if (localStorage.getItem('token')) {
-        this.state.loggedIn = true;
-      } else {
-        this.state.loggedIn = false;
-      }
       commit('updateAccessToken', localStorage.getItem('token'));
     },
     logout({ commit }) {

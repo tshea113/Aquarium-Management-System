@@ -15,12 +15,20 @@ export default new Vuex.Store({
     loginScreen: false,
     signupScreen: false,
     accountScreen: false,
+    nameScreen: false,
+    emailScreen: false,
   },
   mutations: {
     updateAccount: (state, accountInfo) => {
-      state.account.firstName = accountInfo.firstName;
-      state.account.lastName = accountInfo.lastName;
-      state.account.email = accountInfo.email;
+      if (accountInfo.firstName) {
+        state.account.firstName = accountInfo.firstName;
+      }
+      if (accountInfo.lastName) {
+        state.account.lastName = accountInfo.lastName;
+      }
+      if (accountInfo.email) {
+        state.account.email = accountInfo.email;
+      }
     },
     updateAccessToken: (state, accessToken) => {
       state.accessToken = accessToken;
@@ -33,7 +41,13 @@ export default new Vuex.Store({
     },
     toggleAccount: (state, action) => {
       state.accountScreen = action;
-    }
+    },
+    toggleName: (state, action) => {
+      state.nameScreen = action;
+    },
+    toggleEmail: (state, action) => {
+      state.emailScreen = action;
+    },
   },
   actions: {
     setAccount({ commit }, accountInfo) {
@@ -76,6 +90,18 @@ export default new Vuex.Store({
     },
     closeAccount({ commit }) {
       commit('toggleAccount', false);
+    },
+    openName({ commit }) {
+      commit('toggleName', true);
+    },
+    closeName({ commit }) {
+      commit('toggleName', false);
+    },
+    openEmail({ commit }) {
+      commit('toggleEmail', true);
+    },
+    closeEmail({ commit }) {
+      commit('toggleEmail', false);
     },
   },
 });

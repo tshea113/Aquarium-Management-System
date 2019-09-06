@@ -32,7 +32,7 @@ def token_required(f):
         try:
             token = auth_headers[1]
             data = jwt.decode(token, Config.SECRET_KEY)
-            user = User.query.filter_by(email=data['sub']).first()
+            user = User.query.filter_by(id=data['sub']).first()
             if not user:
                 return redirect('/')
             return f(user, *args, **kwargs)
@@ -88,7 +88,7 @@ def login():
         return jsonify({'message': 'Invalid credentials', 'authenticated': False}), 401
 
     token = jwt.encode({
-        'sub': user.email,
+        'sub': user.id,
         'iat':datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(minutes=30)},
         Config.SECRET_KEY)
@@ -102,4 +102,40 @@ def dashboard(current_user):
         'firstName': current_user.first_name, 
         'lastName': current_user.last_name,
         'email': current_user.email,
-        })
+    })
+
+@auth.route('/changeName', methods=['POST'])
+@token_required
+def changeName(current_user):
+    # Get the name data from the request
+    data = request.json
+
+    # Handle name changes for first and last names
+    if data.get('firstName'):
+        current_user.first_name = data.get('firstName')
+    if data.get('lastName'):
+        current_user.last_name = data.get('lastName')
+
+    # Commit changes to database
+    db.session.commit()
+
+    return jsonify({ 
+        'firstName': data.get('firstName'), 
+        'lastName': data.get('lastName'),
+    })
+
+@auth.route('/changeEmail', methods=['POST'])
+@token_required
+def changeEmail(current_user):
+    # Get the name data from the request
+    data = request.json
+    
+    # Assign the new email
+    current_user.email = data.get('email')
+
+    # Commit changes to database
+    db.session.commit()
+
+    return jsonify({ 
+        'email': current_user.email,
+    })

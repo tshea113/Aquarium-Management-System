@@ -60,9 +60,9 @@ router.beforeEach((to, from, next) => {
     })
     .catch((err) => {
       store.dispatch('setAccount', {
-        firstName: null, 
-        lastName: null, 
-        email: null
+        firstName: null,
+        lastName: null,
+        email: null,
       });
       next('/');
     });

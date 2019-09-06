@@ -1,66 +1,66 @@
 <template>
-  <v-dialog
-    v-model="this.accountScreen"
-    persistent
-    fullscreen
-    hide-overlay
-    transition="dialog-bottom-transition"
-  >
-    <v-card>
-      <v-toolbar dark color="deep-orange darken-4">
-        <v-btn icon dark @click="this.closeAccount">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-toolbar-title>Account Info</v-toolbar-title>
-        <div class="flex-grow-1"></div>
-        <v-toolbar-items>
-          <v-btn dark text>Save</v-btn>
-        </v-toolbar-items>
-      </v-toolbar>
-      <v-card class="ma-3">
-        <v-card-title>Profile</v-card-title>
-        <v-list>
-          <v-divider></v-divider>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>
-                First Name
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ this.account.firstName }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-           <v-divider></v-divider>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>
-                Last Name
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ this.account.lastName }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-                     <v-divider></v-divider>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>
-                Email
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ this.account.email }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+  <div>
+    <v-dialog
+      v-model="this.accountScreen"
+      persistent
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar dark color="deep-orange darken-4">
+          <v-btn icon dark @click="this.closeAccount">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Account Info</v-toolbar-title>
+          <div class="flex-grow-1"></div>
+        </v-toolbar>
+        <v-card class="ma-3">
+          <v-card-title>Profile</v-card-title>
+          <v-list>
+            <v-divider></v-divider>
+            <v-list-item @click="this.openName">
+              <v-list-item-content>
+                <v-list-item-title>
+                  Name
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ this.account.firstName }} {{ this.account.lastName }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item @click="this.openEmail">
+              <v-list-item-content>
+                <v-list-item-title>
+                  Email
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ this.account.email }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item @click="">
+              <v-list-item-content>
+                <v-list-item-title>
+                  Reset Password
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
       </v-card>
-    </v-card>
-  </v-dialog>
+    </v-dialog>
+    <change-name/>
+    <change-email/>
+  </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import ChangeName from './ChangeName.vue';
+import ChangeEmail from './ChangeEmail.vue';
 
 export default {
   name: 'Account',
@@ -91,15 +91,19 @@ export default {
   computed: {
     ...mapState([
       'accountScreen',
-      'account'
+      'account',
     ]),
   },
   components: {
+    ChangeName,
+    ChangeEmail,
   },
   methods: {
     ...mapActions([
       'setAccessToken',
       'closeAccount',
+      'openName',
+      'openEmail',
     ]),
   },
 };

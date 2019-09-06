@@ -54,7 +54,7 @@
             >
               ACCOUNT
             </v-btn>
-                        <v-btn
+            <v-btn
               v-if="isLoggedIn(true)"
               dark
               @click.stop="navbarClick('Logout')"
